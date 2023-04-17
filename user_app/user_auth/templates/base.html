@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'patient_dashboard' %}">Patient Dashboard</a></li>
+          {% if user.is_doctor %}
+            <li><a href="{% url 'doctor_dashboard' %}">Doctor Dashboard</a></li>
+          {% endif %}
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'signup' %}">Sign up</a></li>
+          <li><a href="{% url 'login' %}">Login</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>

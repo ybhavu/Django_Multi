@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Sign up</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-group">
+      <label for="id_is_doctor">Are you a doctor?</label>
+      <input type="checkbox" name="is_doctor" id="id_is_doctor">
+    </div>
+    <button type="submit">Sign up</button>
+  </form>
+{% endblock %}
