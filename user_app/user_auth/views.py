@@ -54,3 +54,54 @@ def patient_dashboard(request):
 @login_required
 def doctor_dashboard(request):
     return render(request, 'doctor_dashboard.html', {'user': request.user})
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Post, Category
+from .forms import PostForm
+
+
+@login_required
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('blog:post_list')
+    else:
+        form = PostForm()
+    return render(request, 'blog/create_post.html', {'form': form})
+
+
+def post_list(request):
+    posts = Post.objects.filter(draft=False)
+    return render(request, 'blog/post_list.html', {'posts': posts})
+
+
+def post_detail(request, pk):
+    post = Post.objects.get(pk=pk)
+    return render(request, 'blog/post_detail.html', {'post': post})
+
+
+@login_required
+def draft_list(request):
+    posts = Post.objects.filter(draft=True, author=request.user)
+    return render(request, 'blog/draft_list.html', {'posts': posts})
+
+
+@login_required
+def post_edit(request, pk):
+    post = Post.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('blog:post_detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'blog/create_post.html', {'form': form})
